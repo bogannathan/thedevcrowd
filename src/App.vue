@@ -8,6 +8,12 @@
           </v-list-tile-action>
           <v-list-tile-content>{{ item.title }}</v-list-tile-content>
         </v-list-tile>
+        <v-list-tile @click='onLogout' v-if='userIsAuthenticated'>
+           <v-list-tile-action>
+              <v-icon>exit_to_app</v-icon>
+           </v-list-tile-action>
+           <v-list-tile-content>Logout</v-list-tile-content>
+        </v-list-tile>
       </v-list>
     </v-navigation-drawer>
     <v-toolbar class='primary' dark>
@@ -24,6 +30,13 @@
           <v-icon left>{{ item.icon }}</v-icon>
           {{ item.title }}
         </v-btn>
+        <v-btn
+        flat
+        v-if='userIsAuthenticated'
+        @click='onLogout'>
+        <v-icon left dark>exit_to_app</v-icon>
+        Logout
+        </v-btn>
       </v-toolbar-items>
     </v-toolbar>
       <main>
@@ -37,14 +50,31 @@
     data () {
       return {
         sideNav: false,
-        menuItems: [
-          { icon: 'play_for_work', title: 'View Forum', link: '/categories' },
-          { icon: 'rounded_corner', title: 'Add Thread', link: '/category/new' },
-          { icon: 'person', title: 'Profile', link: '/profile' },
-          { icon: 'face', title: 'Sign Up', link: '/signup' },
-          { icon: 'lock_open', title: 'Sign In', link: '/signin' },
-        ]
       }
+    },
+    methods: {
+     onLogout () {
+      this.$store.dispatch('logout')
+     }
+    },
+    computed: {
+     menuItems () {
+      let menuItems = [
+       { icon: 'face', title: 'Sign Up', link: '/signup' },
+       { icon: 'lock_open', title: 'Sign In', link: '/signin' }
+      ]
+      if (this.userIsAuthenticated) {
+       menuItems = [
+        { icon: 'play_for_work', title: 'View Forum', link: '/categories' },
+        { icon: 'rounded_corner', title: 'Add Thread', link: '/category/new' },
+        { icon: 'person', title: 'Profile', link: '/profile' },
+       ]
+      }
+      return menuItems
+     },
+     userIsAuthenticated () {
+      return this.$store.getters.user !== null && this.$store.getters.user !== undefined
+     }
     }
   }
 </script>

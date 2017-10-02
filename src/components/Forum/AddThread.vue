@@ -36,12 +36,9 @@
                       ></v-text-field>
                   </v-layout>
                   <v-layout xs12 sm6 offset-sm3>
-                      <v-text-field
-                        name='imageUrl'
-                        label='Image URL(optional)'
-                        id='imageUrl'
-                        v-model= 'imageUrl'
-                      ></v-text-field>
+                      <v-flex xs12 sm6 offset-sm3>
+                         <input type='file'></input>
+                      </v-flex>
                   </v-layout>
                   <v-layout row>
                       <v-flex xs12 sm6 offset-sm3>

@@ -6,29 +6,10 @@ Vue.use(Vuex)
 
 export const store = new Vuex.Store({
   state: {
-    loadedCategories: [
-      {
-        imageUrl: 'http://blog.cashcrate.com/wp-content/uploads/2013/07/forum.jpg',
-        id: '1',
-        title: 'Forum category1',
-        date: new Date(),
-        topic: 'topic 1',
-        description: 'description 1',
-        category: 'category 1'
-      },
-      { imageUrl: 'http://sporkmarketing.com/wp-content/uploads/2013/07/forum-posting-marketing.jpg',
-        id: 'asdldddd;kfj',
-        title: 'Forum category2',
-        date: '2017-07-18',
-        topic: new Date(),
-        description: 'descript 2',
-        category: 'cateogyr 2'
-      }
-    ],
-    user: {
-      id: 'asdfjlasd',
-      registeredCategories: ['asdldddd;kfj']
-    }
+    loadedCategories: [],
+    user: null,
+    loading: false,
+    error: null
   },
   mutations: {
     createCategory (state, payload) {
@@ -36,26 +17,77 @@ export const store = new Vuex.Store({
     },
     setUser (state, payload) {
      state.user = payload
+    },
+    setLoading (state, payload) {
+     state.loading = payload
+    },
+    setError (state, payload) {
+     state.error = payload
+    },
+    clearError (state) {
+     state.error = null
+    },
+    setLoadedCategories (state, payload) {
+     state.loadedCategories = payload
     }
   },
   actions: {
-    createCategory ({commit}, payload) {
+    loadCategories ({commit}) {
+     commit('setLoading', true)
+     firebase.database().ref('categories').once('value')
+      .then((data) => {
+       const categories = []
+       const obj = data.val()
+       for (let key in obj) {
+        categories.push({
+         id: key,
+         title: obj[key].title,
+         description: obj[key].description,
+         imageUrl: obj[key].imageUrl,
+         date: obj[key].date,
+         topic: obj[key].topic,
+         creatorId: obj[key].creatorId
+        })
+       }
+       commit('setLoadedCategories', categories)
+       commit('setLoading', false)
+      })
+      .catch(
+       (error) => {
+        console.log(error)
+        commit('setLoading', true)
+       }
+      )
+    },
+    createCategory ({commit, getters}, payload) {
       const category = {
         title: payload.title,
         topic: payload.topic,
         imageUrl: payload.imageUrl,
         description: payload.description,
         category: payload.category,
-        date: payload.date,
-        id: 'asfldkjfalsdkfj'
+        date: payload.date.toISOString(),
+        creatorId: getters.user.id
       }
-      //store in firebase to store it
-      commit('createCategory', category)
+      firebase.database().ref('categories').push(category)
+      .then((data) => {
+       const key = data.key
+       commit('createCategory', {
+        ...category,
+        id: key
+       })
+      })
+      .catch((error) => {
+       console.log(error)
+      })
     },
     signUserUp ({commit}, payload) {
+     commit('setLoading', true)
+     commit('clearError')
       firebase.auth().createUserWithEmailAndPassword(payload.email, payload.password)
       .then(
        user => {
+        commit('setLoading, false')
         const newUser = {
          id: user.uid,
          registeredCategories: []
@@ -64,9 +96,42 @@ export const store = new Vuex.Store({
        })
        .catch(
         error => {
+         commit('setLoading', false)
+         commit('setError', error)
          console.log(error)
         }
        )
+    },
+    signUserIn ({commit}, payload) {
+     commit('setLoading', true)
+     commit('clearError')
+     firebase.auth().signInWithEmailAndPassword(payload.email, payload.password)
+     .then(
+       user => {
+        commit('setLoading', false)
+        const newUser = {
+         id: user.uid,
+         registeredCategories: []
+        }
+        commit('setUser', newUser)
+       })
+       .catch(
+        error => {
+         commit('setLoading', false)
+         commit('setError', error)
+         console.log(error)
+        }
+       )
+    },
+    autoSignin ({commit}, payload) {
+     commit('setUser', {id: payload.uid})
+    },
+    logout ({commit}) {
+     firebase.auth().signOut()
+     commit('setUser', null)
+    },
+    clearError ({commit}) {
+     commit('clearError')
     }
   },
   getters: {
@@ -84,6 +149,15 @@ export const store = new Vuex.Store({
           return category.id === categoryId
         })
       }
+    },
+    user (state) {
+     return state.user
+    },
+    loading (state) {
+     return state.loading
+    },
+    error (state) {
+     return state.error
     }
   }
 })

@@ -7,7 +7,7 @@ import Sampleforum from '@/components/Forum/Sampleforum'
 import Signup from '@/components/User/Signup'
 import Signin from '@/components/User/Signin'
 import Profile from '@/components/User/Profile'
-
+import AuthGuard from './auth-guard'
 Vue.use(Router)
 
 export default new Router({
@@ -25,7 +25,8 @@ export default new Router({
     {
       path: '/category/new',
       name: 'AddThread',
-      component: AddThread
+      component: AddThread,
+      beforeEnter: AuthGuard
     },
     {
       path: '/categories/:id',
@@ -36,7 +37,8 @@ export default new Router({
     {
       path: '/profile',
       name: 'Profile',
-      component: Profile
+      component: Profile,
+      beforeEnter: AuthGuard
     },
     {
       path: '/signup',

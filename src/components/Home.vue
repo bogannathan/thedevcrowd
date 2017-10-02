@@ -8,9 +8,19 @@
                 <v-btn large router to='/category/new' class='info'>Add Thread</v-btn>
             </v-flex>
         </v-layout>
+        <v-layout>
+           <v-flex xs12 sm6 offset-sm-3>
+              <v-progress-circular
+              indeterminate class="primary--text"
+              :width='7'
+              :size='70'
+              v-if='loading'
+              ></v-progress-circular>
+           </v-flex>
+        </v-layout>
         <v-layout row wrap class='mb-2'>
           <v-flex xs12>
-            <v-carousel dark style='cursor: pointer'>
+            <v-carousel dark style='cursor: pointer' v-if='!loading'>
                 <v-carousel-item
                 v-for="category in categories"
                 :src="category.imageUrl"
@@ -34,7 +44,10 @@
     computed: {
       categories () {
         return this.$store.getters.featuredCategories
-      }
+      },
+       loading() {
+        return this.$store.getters.loading
+       }
     },
     methods: {
       onLoadForum (id) {
