@@ -158,7 +158,7 @@ export const store = new Vuex.Store({
         commit('setLoading, false')
         const newUser = {
          id: user.uid,
-         registeredCategories: []
+         subscribedCategories: []
         }
         commit('setUser', newUser)
        })
@@ -179,7 +179,7 @@ export const store = new Vuex.Store({
         commit('setLoading', false)
         const newUser = {
          id: user.uid,
-         registeredCategories: []
+         subscribedCategories: []
         }
         commit('setUser', newUser)
        })
@@ -214,6 +214,8 @@ export const store = new Vuex.Store({
     loadedCategory (state) {
       return (categoryId) => {
         return state.loadedCategories.find((category) => {
+         console.log(categoryId)
+         console.log('check')
           return category.id === categoryId
         })
       }

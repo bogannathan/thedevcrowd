@@ -26,7 +26,7 @@
          <v-flex xs12>
             <v-text-field
             name='password'
-            label='password'
+            label='Password'
             id='password'
             v-model='password'
             type='password'

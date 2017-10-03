@@ -9,6 +9,7 @@ import * as firebase from 'firebase'
 import firebaseConfig from '../firebaseconfig'
 import AlertCmp from './components/Shared/Alert.vue'
 import EditCategoryDetailsDialogue from './components/Forum/Edit/EditCategoryDialogue.vue'
+import SubscribeDialogue from './components/Forum/Subscription/SubscribeDialogue.vue'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
@@ -16,6 +17,8 @@ Vue.config.productionTip = false
 Vue.filter('date', DateFilter)
 Vue.component('app-alert', AlertCmp)
 Vue.component('app-edit-category-details-dialogue', EditCategoryDetailsDialogue)
+Vue.component('app-category-subscription-dialogue', SubscribeDialogue)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
