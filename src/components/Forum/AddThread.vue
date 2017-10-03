@@ -35,10 +35,21 @@
                         required
                       ></v-text-field>
                   </v-layout>
-                  <v-layout xs12 sm6 offset-sm3>
-                      <v-flex xs12 sm6 offset-sm3>
-                         <input type='file'></input>
-                      </v-flex>
+                  <v-layout row>
+                   <v-flex xs12 sm6>
+                    <v-btn raised
+                      @click="onPickFile"
+                      class="primary"
+                    >Upload Image
+                      <v-icon right dark>cloud_upload</v-icon>
+                    </v-btn>
+                    <input
+                    type='file'
+                    style='display: none'
+                    ref='fileInput'
+                    accept='image/*'
+                    @change='onFilePicked'>
+                   </v-flex>
                   </v-layout>
                   <v-layout row>
                       <v-flex xs12 sm6 offset-sm3>
@@ -80,7 +91,8 @@
         imageUrl: '',
         description: '',
         topic: '',
-        date: new Date()
+        date: new Date(),
+        image: null
       }
     },
     computed: {
@@ -103,13 +115,29 @@
         const categoryInfo = {
           title: this.title,
           topic: this.topic,
-          imageUrl: this.imageUrl,
+          image: this.image,
           category: this.category,
           description: this.description,
           date: this.submittableDate
         }
         this.$store.dispatch('createCategory', categoryInfo)
         this.$router.push('/categories')
+      },
+      onPickFile() {
+       this.$refs.fileInput.click()
+      },
+      onFilePicked (event) {
+       const files = event.target.files
+       let filename = files[0].name
+       if (filename.lastIndexOf('.') <= 0) {
+        return alert('Please add a valid file!')
+       }
+       const fileReader = new FileReader()
+       fileReader.addEventListener('load', () => {
+        this.imageUrl= fileReader.result
+       })
+       fileReader.readAsDataURL(files[0])
+       this.image = files[0]
       }
     }
   }
