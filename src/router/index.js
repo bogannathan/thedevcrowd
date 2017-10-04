@@ -8,6 +8,7 @@ import Signup from '@/components/User/Signup'
 import Signin from '@/components/User/Signin'
 import Profile from '@/components/User/Profile'
 import AuthGuard from './auth-guard'
+
 Vue.use(Router)
 
 export default new Router({

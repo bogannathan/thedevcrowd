@@ -28,12 +28,11 @@
                     <div class='info--text'>{{ category.topic }} - {{ category.category }}</div>
                     <div>{{ category.description }} - {{ category.date | date }} and {{ category.id }}</div>
                   </v-card-text>
-                  <v-card-actions>
-                    <v-spacer></v-spacer>
-                    <app-category-subscription-dialogue
-                       :categoryId='category.id'></app-category-subscription-dialogue>
-                      <v-btn class='primary'>Go to posts</v-btn>
-                  </v-card-actions>
+																		<v-card-actions>
+						            <v-spacer></v-spacer>
+						            <app-category-subscription-dialogue
+						              :categoryId="category.id"></app-category-subscription-dialogue>
+						          </v-card-actions>
               </v-card>
           </v-flex>
       </v-layout>
@@ -45,8 +44,8 @@
     props: ['id'],
     computed: {
       category () {
-       console.log(this.$store.getters.loadedCategory(this.id).id)
-       console.log('another check')
+       console.log(this.id)
+							console.log('another check')
         return this.$store.getters.loadedCategory(this.id)
       },
       userIsAuthenticated () {

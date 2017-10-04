@@ -9,7 +9,7 @@ import * as firebase from 'firebase'
 import firebaseConfig from '../firebaseconfig'
 import AlertCmp from './components/Shared/Alert.vue'
 import EditCategoryDetailsDialogue from './components/Forum/Edit/EditCategoryDialogue.vue'
-import SubscribeDialogue from './components/Forum/Subscription/SubscribeDialogue.vue'
+import SubscribeDialogue from './components/Forum/Subscripton/SubscribeDialogue.vue'
 
 Vue.use(Vuetify)
 Vue.config.productionTip = false
