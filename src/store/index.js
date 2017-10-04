@@ -160,6 +160,7 @@ export const store = new Vuex.Store({
          id: user.uid,
          subscribedCategories: []
         }
+        commit('setLoading', false)
         commit('setUser', newUser)
        })
        .catch(
