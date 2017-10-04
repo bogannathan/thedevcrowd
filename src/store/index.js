@@ -27,6 +27,19 @@ export const store = new Vuex.Store({
     error: null
   },
   mutations: {
+    subscribeUserToCategory (state, payload) {
+     const id = payload.id
+     if (state.user.subscribedCategories.findIndex(category => category.id === id) >= 0) {
+      return
+     }
+     state.user.subscribedCategories.push(id)
+     state.user.fbCategoryKeys[id] = payload.fbCategoryKey
+    },
+    unsubscribeUserToCategory (state, payload) {
+     const subscribedCategories = state.user.subscribedCategories
+     subscribedCategories.splice(subscribedCategories.findIndex(category => category.id === payload), 1)
+     Reflect.deleteProperty(state.user.fbCategoryKeys, payload)
+    },
     createCategory (state, payload) {
       state.loadedCategories.push(payload)
     },
@@ -61,6 +74,38 @@ export const store = new Vuex.Store({
     }
   },
   actions: {
+   subscribeUserToCategory ({commit, getters}, payload) {
+    commit('setLoading', true)
+    const user = getters.user
+    firebase.database().ref('/users/' + user.id).child('/subscriptions/')
+     .push(payload)
+     .then(data => {
+      commit('setLoading', false)
+      commit('subscribeUserToCategory', {id: payload, fbCategoryKey: data.key})
+     })
+     .catch(error => {
+      console.log(error)
+      commit('setLoading', false)
+     })
+   },
+   unsubscribeUserToCategory ({commit, getters}, payload) {
+    commit('setLoading', true)
+    const user = getters.user
+    if(!user.fbCategoryKeys) {
+     return
+    }
+    const fbCategoryKey = user.fbCategoryKeys[payload]
+    firebase.database().ref('/users/' + user.id + '/subscriptions/').child(fbCategoryKey)
+    .remove()
+    .then(() => {
+     commit('setLoading', false)
+     commit('unsubscribeUserToCategory', payload)
+    })
+    .catch(error => {
+     console.log(error)
+     commit('setLoading', false)
+    })
+   },
     loadCategories ({commit}) {
      commit('setLoading', true)
      firebase.database().ref('categories').once('value')
@@ -158,7 +203,8 @@ export const store = new Vuex.Store({
         commit('setLoading', false)
         const newUser = {
          id: user.uid,
-         subscribedCategories: []
+         subscribedCategories: [],
+         fbCategoryKeys: {}
         }
         commit('setUser', newUser)
        })
@@ -179,7 +225,8 @@ export const store = new Vuex.Store({
         commit('setLoading', false)
         const newUser = {
          id: user.uid,
-         subscribedCategories: []
+         subscribedCategories: [],
+         fbCategoryKeys: {}
         }
         commit('setUser', newUser)
        })
@@ -194,7 +241,8 @@ export const store = new Vuex.Store({
     autoSignin ({commit}, payload) {
      commit('setUser',
      {id: payload.uid,
-     subscribedCategories: []
+     subscribedCategories: [],
+     fbCategoryKeys: {}
     })
     },
     logout ({commit}) {

@@ -1,6 +1,6 @@
 <template>
 	  <v-dialog persistent v-model='subscribeDialogue'>
-				  <v-btn accent slot='activator'>
+				  <v-btn primary accent slot='activator'>
 							  {{ userIsSubscribed ? 'Unsubscribe' : 'Subscribe'}}
 						</v-btn>
 						<v-card>
@@ -47,7 +47,11 @@
 			},
 			methods: {
 				onAgree () {
-
+					if (this.userIsSubscribed) {
+						this.$store.dispatch('unsubscribeUserToCategory', this.categoryId)
+					}else {
+						this.$store.dispatch('subscribeUserToCategory', this.categoryId)
+					}
 				}
 			}
 		}

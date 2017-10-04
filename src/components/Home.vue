@@ -41,6 +41,7 @@
 
 <script>
   export default {
+   // beforeCreate() 
     computed: {
       categories () {
         return this.$store.getters.featuredCategories
