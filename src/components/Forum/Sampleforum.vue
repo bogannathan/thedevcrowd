@@ -31,7 +31,8 @@
 																		<v-card-actions>
 						            <v-spacer></v-spacer>
 						            <app-category-subscription-dialogue
-						              :categoryId="category.id"></app-category-subscription-dialogue>
+						              :categoryId="category.id"
+                    v-if='userIsAuthenticated && !userIsCreator'></app-category-subscription-dialogue>
 						          </v-card-actions>
               </v-card>
           </v-flex>
